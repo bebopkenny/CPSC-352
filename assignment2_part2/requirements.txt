@@ -1,0 +1,5 @@
+# Ensure Python is installed (Optional: Users may need to install Python manually if pip is not available)
+python>=3.8
+
+# Required dependencies
+pycryptodome==3.19.0  # Cryptography library for AES encryption
