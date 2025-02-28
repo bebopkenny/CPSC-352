@@ -2,18 +2,18 @@ import socket
 from Cryptodome.Cipher import AES
 from Cryptodome.Util.Padding import pad
 from Cryptodome.Hash import SHA256
-import Cryptodome.Signature.pkcs1_15 
 from Cryptodome.PublicKey import RSA
+import Cryptodome.Signature.pkcs1_15 
 import struct
 import sys
 
-# Function to create the message to a SHA256 and signs it with the private key
+# Function to create a SHA256 hash of the message and sign it with the private key
 def sign_message(message): 
-    hash = SHA256.new(message)
+    message_hash = SHA256.new(message)
     PRIVATE_KEY_FILE_NAME = "private-key.pem"
     privKey = RSA.import_key(open(PRIVATE_KEY_FILE_NAME).read())
-    sig1 = Cryptodome.Signature.pkcs1_15.new(privKey)
-    signature = sig1.sign(hash)
+    signer = Cryptodome.Signature.pkcs1_15.new(privKey)
+    signature = signer.sign(message_hash)
     return signature
     
 if len(sys.argv) != 4:
@@ -22,17 +22,15 @@ if len(sys.argv) != 4:
     sys.exit(1)
 
 SERVER_IP = sys.argv[1]           # IP
-SERVER_PORT = int(sys.argv[2])      # Port
-key = sys.argv[3].encode()          # Key
+SERVER_PORT = int(sys.argv[2])    # Port
+key = sys.argv[3].encode()        # Key
 
 if len(key) != 16:
     print("Error: Key must be 16 bytes or 16 characters long! Please try again.")
     sys.exit(1)
     
-# Create the client's socket
+# Create the client's socket and connect to the server
 cliSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# Attempt to connect to the server
 cliSock.connect((SERVER_IP, SERVER_PORT))
 
 # Set up the AES encryption with the user key
@@ -42,23 +40,23 @@ encCipher = AES.new(key, AES.MODE_ECB)
 message = input("Please enter the message to the server: ").encode()
 padded_message = pad(message, 16)
 
-# Sign the original raw message to make it a SHA256 and sign it with private key
+# Sign the original raw message (not the padded version)
 signature = sign_message(message)
 
-# Encrypt the padded message
+# Encrypt the padded message with AES
 cipherText = encCipher.encrypt(padded_message)
 
-# Payload Construction
-# 1. A 4 byte header that indicates the length of the signature
+# Payload Construction:
+# 1. A 4-byte header that indicates the length of the signature
 # 2. The RSA signature
 # 3. The AES encrypted cipher text of the padded message
-signature_length = len(signature)
-header = struct.pack("!I", signature_length)
-payload = signature + header + cipherText
+sig_length = len(signature)
+header = struct.pack("!I", sig_length)  # 4-byte big-endian integer for the signature length
+payload = header + signature + cipherText
 
-# Send the encrypted message to the server
+# Send the payload to the server
 cliSock.send(payload)
-print("Encrypted message sent successfully!")
+print("Encrypted message with signature sent successfully!")
 
 # Close the connection
 cliSock.close()
