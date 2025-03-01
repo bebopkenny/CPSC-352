@@ -51,7 +51,7 @@ cipherText = encCipher.encrypt(padded_message)
 # 2. The RSA signature
 # 3. The AES encrypted cipher text of the padded message
 sig_length = len(signature)
-header = struct.pack("!I", sig_length)  # 4-byte big-endian integer for the signature length
+header = struct.pack("!I", sig_length)  
 payload = header + signature + cipherText
 
 # Send the payload to the server

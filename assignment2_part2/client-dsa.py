@@ -6,30 +6,29 @@ from Cryptodome.PublicKey import DSA
 from Cryptodome.Signature import DSS
 import struct
 import sys
-    
+
+# Command line must have four arguments
 if len(sys.argv) != 4:
     print("Error. There should be 4 arguments.")
     print("Example: python3 client.py <server IP> <server port> <key>")
     sys.exit(1)
 
-SERVER_IP = sys.argv[1]           # IP
-SERVER_PORT = int(sys.argv[2])    # Port
-aes_key = sys.argv[3].encode()        # Key
+SERVER_IP = sys.argv[1] # IP
+SERVER_PORT = int(sys.argv[2]) # Port
+aes_key = sys.argv[3].encode()# Key
 
+# Checking if the key is 16 bytes or 16 characters long
 if len(aes_key) != 16:
     print("Error: Key must be 16 bytes or 16 characters long! Please try again.")
     sys.exit(1)
 
-# Create a DSA private key
-dsa_key = DSA.generate(2048)
-
-# Save the DSA private key to a file
-with open("dsa_private_key.pem", "wb") as f:
-    f.write(dsa_key.export_key())
-
-# Save the corresponding DSA public key to a file
-with open("dsa_public_key.pem", "wb") as f:
-    f.write(dsa_key.publickey().export_key())
+# Load your existing DSA private key (generated beforehand)
+try:
+    with open("dsa_private_key.pem", "rb") as f:
+        dsa_key = DSA.import_key(f.read())
+except FileNotFoundError:
+    print("Error: dsa_private_key.pem not found. Please generate it first.")
+    sys.exit(1)
 
 # Create the client's socket and connect to the server
 cliSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -55,7 +54,7 @@ cipherText = encCipher.encrypt(padded_message)
 # 2. The RSA signature
 # 3. The AES encrypted cipher text of the padded message
 sig_length = len(signature)
-header = struct.pack("!I", sig_length)  # 4-byte big-endian integer for the signature length
+header = struct.pack("!I", sig_length) 
 payload = header + signature + cipherText
 
 # Send the payload to the server

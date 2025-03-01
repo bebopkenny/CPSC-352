@@ -1,6 +1,6 @@
 # Assignment 2 Part 2 - Digital Signatures with AES Encryption
 
-This project implements two versions of a secure client/server system that sends encrypted messages with appended digital signatures. One version uses RSA-based digital signatures, and the other uses DSA-based digital signatures. The message itself is encrypted with AES (in ECB mode) using a 16-byte key provided by the user.
+This assignment implements two versions of a secure client and server system that sends encrypted messages with appended digital signatures. One version uses RSA-based digital signatures, and the other uses DSA-based digital signatures. The message itself is encrypted with AES (in ECB mode) using a 16-byte key provided by the user.
 
 ## Files in This Directory
 
@@ -97,7 +97,11 @@ Then, follow the prompt to enter the message you want to send.
     - 4-byte header indicating the length of the signature.
     - The digital signature.
     - The AES-encrypted ciphertext.
----
-Feel free to reach out if you have any questions about the implementation.
+
+## Sources
+
+- [Stack Overflow](https://stackoverflow.com/questions/5866129/rsa-encryption-problem-size-of-payload-data) - The post I provided from Stack Overflow helped me create the payload construction for both RSA and DSA. 
+- [Medium](https://medium.com/@mb20261/python-by-examples-rsa-encryption-decryption-d07a226430b4) - Online blog demonstrating what RSA is and how to use it in Python.
+- [Medium](https://medium.com/@dheeraj.mickey/how-to-encrypt-and-decrypt-files-in-python-using-aes-a-step-by-step-guide-d0eb6f525e4e) - Website that shows how to use DSA with Python and provides examples.
 
 
