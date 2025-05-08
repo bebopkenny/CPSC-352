@@ -3,6 +3,7 @@ from Cryptodome.Cipher import AES
 from Cryptodome.Util.Padding import unpad
 import sys
 
+# Make sure the user is entering three arguments
 if len(sys.argv) != 3:
     print("Error. Command line must have three arguments.")
     print("Example: python3 server.py <port number> <16-byte key>")
@@ -11,6 +12,7 @@ if len(sys.argv) != 3:
 PORT_NUMBER = int(sys.argv[1])
 client_key = sys.argv[2].encode()
 
+# Make sure the user entered a valid 16 bytes or 16 character long key
 if len(client_key) != 16:
     print("Error: Key must be 16 bytes or 16 characters long! Please try again.")
     sys.exit(1)

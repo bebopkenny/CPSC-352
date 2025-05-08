@@ -3,6 +3,7 @@ from Cryptodome.Cipher import AES
 from Cryptodome.Util.Padding import pad
 import sys
 
+# Ensure user entered four arguments
 if len(sys.argv) != 4:
     print("Error. There should be 4 arguments.")
     print("Example: python3 client.py <server IP> <server port> <key>")
@@ -12,6 +13,7 @@ SERVER_IP = sys.argv[1]           # IP
 SERVER_PORT = int(sys.argv[2])      # Port
 key = sys.argv[3].encode()          # Key
 
+# Checking if the key meets the requirements
 if len(key) != 16:
     print("Error: Key must be 16 bytes or 16 characters long! Please try again.")
     sys.exit(1)
